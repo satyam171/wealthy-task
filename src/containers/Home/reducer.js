@@ -18,7 +18,8 @@ export const initialState = {
   data: [],
   error: false,
   updateLoading: false, 
-  updateError: false
+  updateError: false,
+  maxProfit: 0
 };
 
 /* eslint-disable default-case, no-param-reassign */
@@ -33,6 +34,7 @@ const homeReducer = (state = initialState, action) =>
       case GET_DATA_SUCCESS:
         draft.loading = false;
         draft.data = action.data;
+        draft.maxProfit = action.maxProfit; 
         draft.error = false; 
         break;
 
@@ -49,6 +51,7 @@ const homeReducer = (state = initialState, action) =>
       case UPDATE_DATA_SUCCESS:
         draft.updateLoading = false;
         draft.data = action.data;
+        draft.maxProfit = action.maxProfit;
         draft.updateError = false; 
         break;
 

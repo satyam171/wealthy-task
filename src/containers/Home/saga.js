@@ -19,6 +19,18 @@ import request from '../../utils/request';
  * Text request/response handler
  */
 
+function getMaximumProfit(data){
+  let max = -1; 
+  let n = data.length; 
+  for(let i = 0; i<n-1; i++){
+    for(let j = i+1; j<n; j++){
+      let diff = Number(data[j].stock_price) - Number(data[i].stock_price); 
+      if(diff >= max) max = diff; 
+    }
+  }
+  return max*10; 
+} 
+
 export function* getDataFromApi(){
  
   const requestURL = `https://airtable-server.herokuapp.com/get-stock-prices`;
@@ -31,7 +43,7 @@ export function* getDataFromApi(){
       return new Date(a.date) - new Date(b.date);
     });
     // dispatching the success data
-    yield put(getDataSuccess(response));
+    yield put(getDataSuccess(response, getMaximumProfit(response)));
   } catch (err) {
     yield put(getDataError(err));
   }
@@ -62,7 +74,7 @@ export function* updateDataFromApi(action){
       else return item; 
     })
     // dispatching the updated data
-    yield put(updateDataSuccess(data));
+    yield put(updateDataSuccess(data, getMaximumProfit(response)));
   } catch (err) {
     yield put(updateDataError(err));
   }

@@ -11,14 +11,15 @@ import { createStructuredSelector } from 'reselect';
 import { compose } from 'redux'; 
 import moment from 'moment';  
 
-import { Calendar, Button, Modal, InputNumber, message, Spin, Icon } from 'antd';
+import { Calendar, Button, Modal, InputNumber, message, Layout, Icon, Card } from 'antd';
 
 import {
   makeSelectLoading, 
   makeSelectUpdateLoading,
   makeSelectData, 
   makeSelectError, 
-  makeSelectUpdateError
+  makeSelectUpdateError,
+  makeSelectMaxProfit
 } from './selectors';
 
 import {
@@ -27,6 +28,8 @@ import {
 } from './actions'; 
 
 const AntIcon = <Icon type="loading" style={{ fontSize: 12 }} spin />;
+
+const { Header, Footer, Sider, Content } = Layout;
 
 const error = () => {
   message.error('This is a message of error');
@@ -124,17 +127,28 @@ class Home extends Component {
   }
 
   handleData(){
-    const {loading, data, error} = this.props; 
+    const {loading, data, error, maxProfit} = this.props; 
     if(loading) return <div>Loading ...</div>
     if(error) return <div>Error...</div>
     if(!data.length) return <div>Oops no data found!</div>
     return (
-      <div>
-        <Calendar 
-        dateCellRender={this.dateCellRender}
-        validRange={[moment(data[0].date), moment(data[data.length-1].date)]}
-        />
-      </div>
+      <Layout>
+      <Header>Wealthy Task</Header>
+      <Layout>
+        <Content>
+          <Calendar 
+          dateCellRender={this.dateCellRender}
+          validRange={[moment(data[0].date), moment(data[data.length-1].date)]}
+          />
+        </Content>
+        <Sider>
+          <Card title="Maximum Profit" bordered={false} style={{ width: '100%' }}>
+            <p>{maxProfit}</p>
+          </Card>
+        </Sider>
+      </Layout>
+      <Footer>Footer</Footer>
+      </Layout>
     )
   }
 
@@ -156,6 +170,7 @@ const mapStateToProps = createStructuredSelector({
   loading : makeSelectLoading(),
   updateLoading : makeSelectUpdateLoading(), 
   data : makeSelectData(), 
+  maxProfit : makeSelectMaxProfit(), 
   error : makeSelectError(),
   updateError : makeSelectUpdateError()
 });

@@ -28,7 +28,13 @@ const makeSelectData = () =>
     createSelector(
       selectHome, 
       home => home.data
-    )     
+    )  
+    
+const makeSelectMaxProfit = () =>
+    createSelector(
+      selectHome, 
+      home => home.maxProfit
+    )      
 
 const makeSelectError = () =>
     createSelector(
@@ -46,6 +52,7 @@ export {
   makeSelectLoading, 
   makeSelectUpdateLoading,
   makeSelectData, 
+  makeSelectMaxProfit,
   makeSelectError,
   makeSelectUpdateError
 };
