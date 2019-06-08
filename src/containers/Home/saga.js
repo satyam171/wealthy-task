@@ -25,7 +25,11 @@ export function* getDataFromApi(){
 
   try {
     // Call our request helper (see 'utils/request')
-    const response = yield call(request, requestURL);
+    let response = yield call(request, requestURL);
+    // sort on the basis of date
+    response.sort(function(a,b){
+      return new Date(a.date) - new Date(b.date);
+    });
     // dispatching the success data
     yield put(getDataSuccess(response));
   } catch (err) {
