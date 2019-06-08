@@ -20,15 +20,29 @@ import request from '../../utils/request';
  */
 
 function getMaximumProfit(data){
+  // logic to calculate the maximum profit
   let max = -1; 
+  let buyDate = ''; 
+  let sellDate = ''; 
   let n = data.length; 
   for(let i = 0; i<n-1; i++){
     for(let j = i+1; j<n; j++){
-      let diff = Number(data[j].stock_price) - Number(data[i].stock_price); 
-      if(diff >= max) max = diff; 
+      if(data[j].stock_price && data[i].stock_price){
+        let diff = Number(data[j].stock_price) - Number(data[i].stock_price); 
+        if(diff >= max){
+          max = diff; 
+          buyDate = data[i].date; 
+          sellDate = data[j].date; 
+        } 
+      }
     }
   }
-  return max*10; 
+  
+  return {
+    mProfit : max*10, 
+    buyDate, 
+    sellDate
+  }
 } 
 
 export function* getDataFromApi(){
@@ -73,8 +87,11 @@ export function* updateDataFromApi(action){
       if(item.id === response.id) return response; 
       else return item; 
     })
+    data.sort(function(a,b){
+      return new Date(a.date) - new Date(b.date);
+    });
     // dispatching the updated data
-    yield put(updateDataSuccess(data, getMaximumProfit(response)));
+    yield put(updateDataSuccess(data, getMaximumProfit(data)));
   } catch (err) {
     yield put(updateDataError(err));
   }

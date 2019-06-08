@@ -9,9 +9,10 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { compose } from 'redux'; 
-import moment from 'moment';  
+import moment from 'moment'; 
+import Chart from './Chart';  
 
-import { Calendar, Button, Modal, InputNumber, message, Layout, Icon, Card } from 'antd';
+import { Calendar, Button, Modal, InputNumber, message, Row, Col, Icon, Card } from 'antd';
 
 import {
   makeSelectLoading, 
@@ -28,8 +29,6 @@ import {
 } from './actions'; 
 
 const AntIcon = <Icon type="loading" style={{ fontSize: 12 }} spin />;
-
-const { Header, Footer, Sider, Content } = Layout;
 
 const error = () => {
   message.error('This is a message of error');
@@ -98,7 +97,7 @@ class Home extends Component {
         break; 
       }
     }
-    if(item.stock_price) return (
+    if(item.stock_price || item.stock === 0) return (
       <div>
         {item.stock_price} 
         {updateLoading && item.id === this.state.currentClickedDeletedId ? 
@@ -132,23 +131,26 @@ class Home extends Component {
     if(error) return <div>Error...</div>
     if(!data.length) return <div>Oops no data found!</div>
     return (
-      <Layout>
-      <Header>Wealthy Task</Header>
-      <Layout>
-        <Content>
+      <Row>
+        <Col xs={12}>
           <Calendar 
           dateCellRender={this.dateCellRender}
           validRange={[moment(data[0].date), moment(data[data.length-1].date)]}
           />
-        </Content>
-        <Sider>
+        </Col>
+        <Col xs={12}>
           <Card title="Maximum Profit" bordered={false} style={{ width: '100%' }}>
-            <p>{maxProfit}</p>
+            <p>{maxProfit.mProfit}</p>
           </Card>
-        </Sider>
-      </Layout>
-      <Footer>Footer</Footer>
-      </Layout>
+          <Chart data={data}/>
+          <Card title="Buy Date" bordered={false} style={{ width: '100%' }}>
+            <p>{maxProfit.buyDate}</p>
+          </Card>
+          <Card title="Sell Date" bordered={false} style={{ width: '100%' }}>
+            <p>{maxProfit.sellDate}</p>
+          </Card>
+        </Col>
+      </Row>
     )
   }
 

@@ -19,7 +19,7 @@ export const initialState = {
   error: false,
   updateLoading: false, 
   updateError: false,
-  maxProfit: 0
+  maxProfit: {}
 };
 
 /* eslint-disable default-case, no-param-reassign */

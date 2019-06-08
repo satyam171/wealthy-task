@@ -28,7 +28,7 @@ export function getData() {
  * Dispatched when the data is loaded by the request saga
  *
  * @param  {array} The data that was returned from the api
- * @param  {number} The max profit
+ * @param  {number} The max profit obj
  * @return {object} An action object with a type of GET_DATA_SUCCESS passing the data
  */
 export function getDataSuccess(data, maxProfit) {
@@ -72,7 +72,7 @@ export function updateData(stock) {
  * Dispatched when the data is updated by the request saga
  *
  * @param  {array} The updated data array
- * @param  {number} The max profit
+ * @param  {number} The max profit obj
  * @return {object} An action object with a type of UPDATE_DATA_SUCCESS passing the data
  */
 export function updateDataSuccess(data, maxProfit) {
