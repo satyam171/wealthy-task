@@ -11,12 +11,14 @@ import { createStructuredSelector } from 'reselect';
 import { compose } from 'redux'; 
 import moment from 'moment';  
 
-import { Calendar, Button, Icon } from 'antd';
+import { Calendar, Button, Modal, InputNumber, message, Spin, Icon } from 'antd';
 
 import {
   makeSelectLoading, 
+  makeSelectUpdateLoading,
   makeSelectData, 
   makeSelectError, 
+  makeSelectUpdateError
 } from './selectors';
 
 import {
@@ -24,15 +26,66 @@ import {
   updateData
 } from './actions'; 
 
+const AntIcon = <Icon type="loading" style={{ fontSize: 12 }} spin />;
+
+const error = () => {
+  message.error('This is a message of error');
+};
+
 class Home extends Component { 
+
+  state = { 
+    visible: false, 
+    updatedStockPrice: 0, 
+    currentClickedDeletedId : ''
+  };
 
   componentDidMount(){
     this.props.getData(); 
   }
 
+  componentDidUpdate(prevProps){
+    const {updateLoading, updateError} = this.props; 
+    if((updateLoading !== prevProps.updateLoading) && (!updateLoading && !updateError)){
+      this.setState({visible : false}); 
+    }
+    if((updateError !== prevProps.updateError) && updateError){
+      error(); // pop the error message
+    }
+  }
+
+  showModal = () => {
+    this.setState({
+      visible: true,
+    });
+  };
+
+  handleCancel = e => {
+    console.log(e);
+    this.setState({
+      visible: false,
+    });
+  };
+
+  handleDelete(item){
+    let updatedStock = {...item, stock_price : undefined}; 
+    this.setState({currentClickedDeletedId : item.id}, ()=>{
+      this.props.updateData(updatedStock); 
+    }) 
+  }
+
+  handleOk = item => {
+    let updatedStock = {...item, stock_price : this.state.updatedStockPrice}; 
+    this.props.updateData(updatedStock); 
+  };
+
+  priceChange = (value) => {
+    this.setState({updatedStockPrice : value}); 
+  }
+  
   dateCellRender = (value) => {
     // formatting the date cell renderer
-    const {data} = this.props; 
+    const {data, updateLoading} = this.props; 
     let dates = data.map(item => item.date); 
     let item = {}; 
     let formattedDate = value.format('YYYY-MM-DD')
@@ -42,10 +95,31 @@ class Home extends Component {
         break; 
       }
     }
-    if(item.stock_price) return <div>{item.stock_price} <Icon type="close-circle" /></div>
+    if(item.stock_price) return (
+      <div>
+        {item.stock_price} 
+        {updateLoading && item.id === this.state.currentClickedDeletedId ? 
+        <Icon type="loading" style={{ fontSize: 24 }} spin /> :  
+        <Button onClick={() => this.handleDelete(item)} type="primary" icon="close-circle" />
+        }
+        </div>
+    )
     else{
       if(dates.includes(value.format('YYYY-MM-DD')))
-        return <Button>ADD</Button>
+        return (
+          <div>
+            <Button onClick={this.showModal}>ADD</Button>
+            <Modal
+            title="Add stock price"
+            visible={this.state.visible}
+            onOk={(e) => this.handleOk(item)}
+            confirmLoading={this.props.updateLoading}
+            onCancel={this.handleCancel}
+          >
+            <InputNumber defaultValue={0} onChange={this.priceChange} />
+          </Modal>
+          </div>
+        )
     }
   }
 
@@ -80,8 +154,10 @@ Home.propTypes = {
 
 const mapStateToProps = createStructuredSelector({
   loading : makeSelectLoading(),
+  updateLoading : makeSelectUpdateLoading(), 
   data : makeSelectData(), 
-  error : makeSelectError()
+  error : makeSelectError(),
+  updateError : makeSelectUpdateError()
 });
 
 function mapDispatchToProps(dispatch) {

@@ -18,6 +18,12 @@ const makeSelectLoading = () =>
       home => home.loading
     )
 
+const makeSelectUpdateLoading = () =>
+    createSelector(
+      selectHome, 
+      home => home.updateLoading
+    )    
+
 const makeSelectData = () =>
     createSelector(
       selectHome, 
@@ -30,8 +36,16 @@ const makeSelectError = () =>
       home => home.error
     )    
 
+const makeSelectUpdateError = () =>
+    createSelector(
+      selectHome, 
+      home => home.updateError
+    )    
+
 export { 
   makeSelectLoading, 
+  makeSelectUpdateLoading,
   makeSelectData, 
-  makeSelectError
+  makeSelectError,
+  makeSelectUpdateError
 };
