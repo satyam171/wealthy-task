@@ -48,7 +48,7 @@ class Home extends Component {
   componentDidUpdate(prevProps){
     const {updateLoading, updateError} = this.props; 
     if((updateLoading !== prevProps.updateLoading) && (!updateLoading && !updateError)){
-      this.setState({visible : false, item : null}); 
+      this.setState({visible : false, item : null, updatedStockPrice : 0}); 
     }
     if((updateError !== prevProps.updateError) && updateError){
       error(); // pop the error message
@@ -63,7 +63,7 @@ class Home extends Component {
 
   handleCancel = e => {
     this.setState({
-      visible: false, item : null
+      visible: false, item : null, updatedStockPrice : 0
     });
   };
 

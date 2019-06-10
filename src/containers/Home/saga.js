@@ -26,7 +26,8 @@ function getMaximumProfit(data){
   let n = data.length; 
   let max_diff = Number(data[1].stock_price) - Number(data[0].stock_price); 
   let min_element = Number(data[0].stock_price);  
-  if(data[0].stock_price) { buyDate = sellDate = data[0].date; }  
+  if(data[0].stock_price) { buyDate = sellDate = data[0].date; } 
+  let minObj = {};  
   for(let i = 1; i<n; i++){
     if(!data[i].stock_price) continue;
     else{
@@ -36,10 +37,11 @@ function getMaximumProfit(data){
       if(curr - min_element >= max_diff){
         max_diff = curr - min_element; 
         sellDate = data[i].date; 
+        buyDate = minObj.date; 
       }
       if (curr <= min_element) {
         min_element = curr;
-        buyDate = data[i].date; 
+        minObj = data[i]; 
       }
     }   
   }
