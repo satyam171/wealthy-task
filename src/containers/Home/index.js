@@ -48,7 +48,7 @@ class Home extends Component {
   componentDidUpdate(prevProps){
     const {updateLoading, updateError} = this.props; 
     if((updateLoading !== prevProps.updateLoading) && (!updateLoading && !updateError)){
-      this.setState({visible : false, item : null, updatedStockPrice : 0}); 
+      this.setState({visible : false, item : null, updatedStockPrice : 0, currentClickedDeletedId : ''}); 
     }
     if((updateError !== prevProps.updateError) && updateError){
       error(); // pop the error message
@@ -109,15 +109,6 @@ class Home extends Component {
         return (
           <div>
             <Button onClick={() => this.showModal(item)}>ADD</Button>
-            <Modal
-            title="Add stock price"
-            visible={this.state.visible}
-            onOk={this.handleOk}
-            confirmLoading={this.props.updateLoading}
-            onCancel={this.handleCancel}
-          >
-            <InputNumber defaultValue={0} onChange={this.priceChange} />
-          </Modal>
           </div>
         )
       }
@@ -136,6 +127,15 @@ class Home extends Component {
           dateCellRender={this.dateCellRender}
           validRange={[moment(data[0].date), moment(data[data.length-1].date)]}
           />
+          <Modal
+            title="Add stock price"
+            visible={this.state.visible}
+            onOk={this.handleOk}
+            confirmLoading={this.props.updateLoading}
+            onCancel={this.handleCancel}
+          >
+            <InputNumber defaultValue={0} onChange={this.priceChange} value={this.state.updatedStockPrice} min={0}/>
+          </Modal>
         </Col>
         <Col xs={12}>
           <Card title="Maximum Profit" bordered={false} style={{ width: '100%' }}>
