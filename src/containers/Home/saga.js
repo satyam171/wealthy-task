@@ -20,26 +20,24 @@ import request from '../../utils/request';
  */
 
 function getMaximumProfit(data){
-  // logic to calculate the maximum profit
-  let max = -1; 
+  // logic to calculate the maximum profit 
   let buyDate = ''; 
   let sellDate = ''; 
   let n = data.length; 
-  for(let i = 0; i<n-1; i++){
-    for(let j = i+1; j<n; j++){
-      if(data[j].stock_price && data[i].stock_price){
-        let diff = Number(data[j].stock_price) - Number(data[i].stock_price); 
-        if(diff >= max){
-          max = diff; 
-          buyDate = data[i].date; 
-          sellDate = data[j].date; 
-        } 
-      }
-    }
+  let max_diff = Number(data[1].stock_price) - Number(data[0].stock_price); 
+  let min_element = Number(data[0].stock_price);  
+  for(let i = 1; i<n; i++){
+    if(!data[i].stock_price) continue;
+    else{
+      let curr = Number(data[i].stock_price); 
+      if(curr - min_element > max_diff)
+        max_diff = curr - min_element
+      if (curr < min_element) 
+        min_element = curr;
+    }   
   }
-  
   return {
-    mProfit : max*10, 
+    mProfit : isNaN(max_diff) ? 0 : max_diff*10, 
     buyDate, 
     sellDate
   }

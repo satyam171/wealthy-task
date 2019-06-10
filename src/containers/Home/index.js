@@ -28,8 +28,6 @@ import {
   updateData
 } from './actions'; 
 
-const AntIcon = <Icon type="loading" style={{ fontSize: 12 }} spin />;
-
 const error = () => {
   message.error('This is a message of error');
 };
@@ -38,6 +36,7 @@ class Home extends Component {
 
   state = { 
     visible: false, 
+    item: null, 
     updatedStockPrice: 0, 
     currentClickedDeletedId : ''
   };
@@ -49,23 +48,22 @@ class Home extends Component {
   componentDidUpdate(prevProps){
     const {updateLoading, updateError} = this.props; 
     if((updateLoading !== prevProps.updateLoading) && (!updateLoading && !updateError)){
-      this.setState({visible : false}); 
+      this.setState({visible : false, item : null}); 
     }
     if((updateError !== prevProps.updateError) && updateError){
       error(); // pop the error message
     }
   }
 
-  showModal = () => {
-    this.setState({
-      visible: true,
-    });
+  showModal = (item) => {
+      this.setState({
+        visible: true, item 
+      });
   };
 
   handleCancel = e => {
-    console.log(e);
     this.setState({
-      visible: false,
+      visible: false, item : null
     });
   };
 
@@ -76,8 +74,8 @@ class Home extends Component {
     }) 
   }
 
-  handleOk = item => {
-    let updatedStock = {...item, stock_price : this.state.updatedStockPrice}; 
+  handleOk = () => { 
+    let updatedStock = {...this.state.item, stock_price : this.state.updatedStockPrice}; 
     this.props.updateData(updatedStock); 
   };
 
@@ -97,7 +95,7 @@ class Home extends Component {
         break; 
       }
     }
-    if(item.stock_price || item.stock === 0) return (
+    if(item.stock_price || item.stock_price === 0) return (
       <div>
         {item.stock_price} 
         {updateLoading && item.id === this.state.currentClickedDeletedId ? 
@@ -107,14 +105,14 @@ class Home extends Component {
         </div>
     )
     else{
-      if(dates.includes(value.format('YYYY-MM-DD')))
+      if(dates.includes(formattedDate)){
         return (
           <div>
-            <Button onClick={this.showModal}>ADD</Button>
+            <Button onClick={() => this.showModal(item)}>ADD</Button>
             <Modal
             title="Add stock price"
             visible={this.state.visible}
-            onOk={(e) => this.handleOk(item)}
+            onOk={this.handleOk}
             confirmLoading={this.props.updateLoading}
             onCancel={this.handleCancel}
           >
@@ -122,6 +120,7 @@ class Home extends Component {
           </Modal>
           </div>
         )
+      }
     }
   }
 
