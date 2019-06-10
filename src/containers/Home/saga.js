@@ -29,9 +29,11 @@ function getMaximumProfit(data){
   for(let i = 1; i<n; i++){
     if(!data[i].stock_price) continue;
     else{
+      if(isNaN(max_diff)) max_diff = 0; // adding a small check because the comparison cannot be done with NaN
       let curr = Number(data[i].stock_price); 
-      if(curr - min_element > max_diff)
-        max_diff = curr - min_element
+      if(curr - min_element > max_diff){
+        max_diff = curr - min_element; 
+      }
       if (curr < min_element) 
         min_element = curr;
     }   
